@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block head %}<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>{% endblock %}
+
+{% block body %}
+
+<div ng-app="cart" ng-controller="CartController">
+
+<div class="row">
+
+<div class="col-md-7">
+
+<h1 class="centerme">Shopping Cart</h1>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Count</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in OrderObj.items.all %}
+                <tr ng-repeat="product in cart">
+                    <td>{{item.product.title}}</td>
+                    <td>{{item.count}}</td>
+                    <td>{{item.price}}</td>
+                </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</div>
+
+<div class="col-md-5">
+
+    <h2>Delivery Options</h2>
+<br>
+    <form name="deliveryOptions" ng-controller="FormController as formCtrl" ng-submit="deliveryOptions.$valid && validateDelivery()" novalidate>
+        <label>How to pay your invoice?</label><br>
+
+        <input type="radio" name="pay" value="online" required checked id="online-pay"><label for="online-pay">online payment</label><br>
+        <input type="radio" name="pay" value="spot" required id="spot-pay"><label for="spot-pay">Payment on the spot</label><br>
+            <br>
+        <button id="submit" class="btn btn-default checkout"> Check Out </button><br><br>
+      
+        </form>
+
+</div>
+
+</div>
+
+<div class="spacer"></div>
+<div class="spacer"></div>
+
+
+
+<script type="text/javascript" src="static/js/angularcart.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $("#submit").click(function (e) {
+    e.preventDefault();
+    // check fields
+
+    
+        var payment_type = $('input[name="pay"]:checked').val();
+        
+        var csrf_token = $("input[name=csrfmiddlewaretoken]").val()
+        var formData = new FormData();
+        formData.append('payment_type', payment_type);
+        $.ajax({
+            type:"POST",
+            url:'{% url "main:checkout" %}',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            success: function(json)
+            {
+                console.log(json);
+                alert('successfully')
+                redirectURL = "{% url 'main:checkout' %}";
+                setTimeout ( function () {
+                    window.location = redirectURL;
+                }, 1000)
+                
+            },
+            error: function (json, status, xhr) {
+                console.log(json)
+            }
+        });
+    
+})
+</script>
+
+</div>
+
+{% endblock %}

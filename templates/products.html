@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    {% if Products %}
+
+        <div class="row">
+
+            {% for product in Products %}
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 proddiv">
+                    <a href="{% url 'main:product_page' product.id %}"><img src="{{product.image.url}}"></a>
+                    <h2 class="imageqty hidden">+</h2>
+                    <h4>{{product.title}}</h4>
+                    <div class="proddetails"><p>ريال{{product.price}} <span class="spacerbull">&bull;</span> {{ product.weight }} {{ product.unit }}</div>
+                    <button type="button" class="add_to_cart prod_page btn btn-default" id="{{product.id}}">Add to Cart</button>
+                </div>
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <h2>Sorry, we couldn't find what you were looking for.</h2>
+
+    {% endif %}
+
+    <script type="text/javascript" src="static/js/cart.js"></script>
+
+    <div class="row">
+        <a href="{% url 'main:products' %}" class="backtoall">Back to All Products</a>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(".add_to_cart").click(function (e) {
+    e.preventDefault();
+
+        var this_id = this.id;
+
+        var formData = new FormData();
+
+        formData.append('id', this_id);
+
+        $.ajax({
+            type:"POST",
+            url:'{% url "main:cart" %}',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            success: function(json)
+            {
+                alert('added to cart')
+                redirectURL = "/cart/";
+                setTimeout ( function () {
+                    window.location = redirectURL;
+                }, 1000)
+                
+            },
+            error: function (json, status, xhr) {
+                console.log(json)
+            }
+        });
+    
+})
+</script>
+{% endblock %}

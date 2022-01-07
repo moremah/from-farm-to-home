@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+{% csrf_token %}
+
+{% block body %}
+
+<h1>Static Homepage</h1>
+
+<a id="site_enter" href="{% url 'main:products' %}">Enter</a>
+
+{% endblock %}
