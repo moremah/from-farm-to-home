@@ -2,6 +2,7 @@ from .models import User,UserManager,Icon,Category,Tag,Product,Order,OrderDetail
 from django.contrib.auth import get_user_model
 from django.contrib import admin
 
+
 User = get_user_model()
 # Main Section Title
 admin.site.site_header = 'From Farm To Home'
